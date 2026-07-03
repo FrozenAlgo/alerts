@@ -1,0 +1,12 @@
+{
+  "name": "onalert-functions",
+  "description": "Cloud Functions for OnAlert ESP32 alert push notifications",
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^12.6.0",
+    "firebase-functions": "^5.1.1"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "rules": {
+    "devices": {
+      "$serial": {
+        "status": { ".read": true, ".write": true },
+        "ping": { ".read": true, ".write": true },
+        "commands": { ".read": true, ".write": true },
+        "security_pin": { ".read": false, ".write": false },
+        ".read": true
+      }
+    }
+  }
+}
