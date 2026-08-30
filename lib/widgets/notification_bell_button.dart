@@ -18,7 +18,7 @@ class NotificationBellButton extends StatelessWidget {
           clipBehavior: Clip.none,
           children: [
             IconButton(
-              icon: const Icon(Icons.notifications_rounded, color: AppTheme.kPrimaryCyan),
+              icon: const Icon(Icons.notifications_rounded, color: AppTheme.kCyan),
               onPressed: () {
                 final ctx = rootNavigatorKey.currentContext ?? context;
                 Navigator.push(ctx, MaterialPageRoute(builder: (_) => const InAppNotificationsPage()));
@@ -30,8 +30,8 @@ class NotificationBellButton extends StatelessWidget {
                 top: 6,
                 child: Container(
                   padding: const EdgeInsets.all(4),
-                  decoration: const BoxDecoration(color: Colors.redAccent, shape: BoxShape.circle),
-                  child: Text('$count', style: const TextStyle(fontSize: 10, color: Colors.white)),
+                  decoration: const BoxDecoration(color: AppTheme.kAlertRed, shape: BoxShape.circle),
+                  child: Text('$count', style: const TextStyle(fontSize: 10, color: AppTheme.kTextOnBrand)),
                 ),
               ),
           ],

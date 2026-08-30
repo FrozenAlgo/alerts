@@ -3,7 +3,10 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../services/app_database.dart';
+
 import '../theme/app_theme.dart';
+import '../widgets/ui/ui.dart';
 
 class LogViewerPage extends StatefulWidget {
   final String userId;
@@ -31,41 +34,37 @@ class _LogViewerPageState extends State<LogViewerPage> {
   Widget build(BuildContext context) {
     if (_pairedSerial == null || _pairedSerial!.isEmpty) {
       return Scaffold(
-        backgroundColor: AppTheme.kDarkSlate,
-        appBar: AppBar(
-          title: const Text('Raw Logs', style: TextStyle(color: Colors.white)),
-          backgroundColor: Colors.transparent,
+        backgroundColor: AppTheme.kBackground,
+        appBar: const AppBrandedAppBar(title: 'Raw Logs'),
+        body: const Center(
+          child: Text('Pair a device to view RTDB logs', style: TextStyle(color: AppTheme.kTextSecondary)),
         ),
-        body: const Center(child: Text('Pair a device to view RTDB logs', style: TextStyle(color: Colors.blueGrey))),
       );
     }
 
     return Scaffold(
-      backgroundColor: AppTheme.kDarkSlate,
-      appBar: AppBar(
-        title: const Text('Raw Logs', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-      ),
+      backgroundColor: AppTheme.kBackground,
+      appBar: const AppBrandedAppBar(title: 'Raw Logs'),
       body: StreamBuilder<DatabaseEvent>(
-        stream: FirebaseDatabase.instance.ref('devices/$_pairedSerial/status').onValue,
+        stream: AppDatabase.rtdb.ref('devices/$_pairedSerial/status').onValue,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator(color: AppTheme.kPrimaryCyan));
+            return const Center(child: CircularProgressIndicator(color: AppTheme.kCyan));
           }
           final payload = snapshot.data!.snapshot.value?.toString() ?? 'No data';
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              Text('Updated ${DateFormat('HH:mm:ss').format(DateTime.now())}',
-                  style: const TextStyle(color: AppTheme.kPrimaryCyan, fontSize: 12)),
+              Text(
+                'Updated ${DateFormat('HH:mm:ss').format(DateTime.now())}',
+                style: const TextStyle(color: AppTheme.kCyan, fontSize: 12, fontWeight: FontWeight.w600),
+              ),
               const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: AppTheme.kGlassDecoration,
-                child: SelectableText(payload,
-                    style: const TextStyle(color: Colors.white70, fontFamily: 'monospace', fontSize: 12)),
+              AppCard(
+                child: SelectableText(
+                  payload,
+                  style: const TextStyle(color: AppTheme.kTextPrimary, fontFamily: 'monospace', fontSize: 12),
+                ),
               ),
             ],
           );

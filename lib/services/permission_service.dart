@@ -30,6 +30,29 @@ class PermissionService {
     return result.isGranted;
   }
 
+  /// Android 12+ needs both scan and connect for reliable BLE discovery.
+  static Future<bool> requestBluetoothForScan() async {
+    final scan = await Permission.bluetoothScan.status;
+    final connect = await Permission.bluetoothConnect.status;
+
+    if (!scan.isGranted) {
+      await Permission.bluetoothScan.request();
+    }
+    if (!connect.isGranted) {
+      await Permission.bluetoothConnect.request();
+    }
+
+    final scanOk = await Permission.bluetoothScan.isGranted;
+    final connectOk = await Permission.bluetoothConnect.isGranted;
+    return scanOk && connectOk;
+  }
+
+  static Future<bool> isBluetoothScanGranted() async {
+    final scan = await Permission.bluetoothScan.isGranted;
+    final connect = await Permission.bluetoothConnect.isGranted;
+    return scan && connect;
+  }
+
   static Future<Map<OnAlertPermission, bool>> requestAll() async {
     final results = <OnAlertPermission, bool>{};
     for (final p in OnAlertPermission.values) {

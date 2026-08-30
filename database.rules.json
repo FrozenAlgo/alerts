@@ -8,6 +8,11 @@
         "security_pin": { ".read": false, ".write": false },
         ".read": true
       }
+    },
+    "users": {
+      "$userId": {
+        "hardware": { ".read": true, ".write": true }
+      }
     }
   }
 }

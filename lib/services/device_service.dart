@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 
+import 'app_database.dart';
+
 class DeviceService {
   static const String latestFirmwareVersion = '1.1.0';
 
@@ -9,7 +11,7 @@ class DeviceService {
     String inputPin,
     String userId,
   ) async {
-    final ref = FirebaseDatabase.instance.ref('devices/$inputSerial');
+    final ref = AppDatabase.rtdb.ref('devices/$inputSerial');
     final snapshot = await ref.get();
 
     if (!snapshot.exists) {
@@ -35,7 +37,7 @@ class DeviceService {
 
   static Future<String?> getFirmwareVersion(String serial) async {
     final snapshot =
-        await FirebaseDatabase.instance.ref('devices/$serial/status').get();
+        await AppDatabase.rtdb.ref('devices/$serial/status').get();
     if (!snapshot.exists) return null;
     final data = Map<dynamic, dynamic>.from(snapshot.value as Map);
     return data['firmware_version']?.toString();
@@ -48,7 +50,7 @@ class DeviceService {
   }
 
   static Future<void> triggerOtaUpdate(String serial) async {
-    await FirebaseDatabase.instance.ref('devices/$serial/commands/ota').set({
+    await AppDatabase.rtdb.ref('devices/$serial/commands/ota').set({
       'action': 'UPDATE',
       'target_version': latestFirmwareVersion,
       'requested_at': DateTime.now().millisecondsSinceEpoch,
@@ -56,7 +58,7 @@ class DeviceService {
   }
 
   static Future<int> measureSignalLatency(String serial) async {
-    final pingRef = FirebaseDatabase.instance.ref('devices/$serial/ping');
+    final pingRef = AppDatabase.rtdb.ref('devices/$serial/ping');
     final start = DateTime.now();
     await pingRef.set({'ts': start.millisecondsSinceEpoch});
     await pingRef.onValue.first;

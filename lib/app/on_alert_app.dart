@@ -13,16 +13,7 @@ class OnAlertApp extends StatelessWidget {
       navigatorKey: rootNavigatorKey,
       title: 'OnAlert',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: AppTheme.kDarkSlate,
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppTheme.kPrimaryCyan,
-          brightness: Brightness.dark,
-          surface: AppTheme.kGlassBase,
-        ),
-      ),
+      theme: AppTheme.themeData(),
       home: const SplashScreen(),
     );
   }

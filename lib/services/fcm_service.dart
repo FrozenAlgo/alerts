@@ -84,12 +84,44 @@ class FcmService {
   Future<void> clearTokenForCurrentUser() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
-    await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
-      'fcmToken': FieldValue.delete(),
-    });
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+        'fcmToken': FieldValue.delete(),
+      }, SetOptions(merge: true));
+    } catch (_) {}
   }
 
   Future<String?> getToken() => _messaging.getToken();
+
+  Future<void> showLocalEmergencyNotification({
+    required String title,
+    required String body,
+    Map<String, dynamic>? data,
+  }) async {
+    if (!await isPushEnabled()) return;
+
+    InAppNotificationService.instance.add(
+      title: title,
+      body: body,
+      data: data ?? {},
+    );
+
+    await _localNotifications.show(
+      title.hashCode,
+      title,
+      body,
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'onalert_emergency',
+          'Emergency Alerts',
+          importance: Importance.max,
+          priority: Priority.high,
+          icon: '@mipmap/ic_launcher',
+        ),
+      ),
+      payload: data != null ? jsonEncode(data) : null,
+    );
+  }
 
   void _handleForegroundMessage(RemoteMessage message) async {
     if (!await isPushEnabled()) return;
@@ -119,7 +151,7 @@ class FcmService {
       payload: jsonEncode(message.data),
     );
 
-    if (message.data['type'] == 'ACCIDENT_DETECTED') {
+    if (message.data['type'] == 'ACCIDENT_DETECTED' || message.data['type'] == 'CONTACT_EMERGENCY') {
       _showEmergencyOverlay(message.data);
     }
   }
@@ -130,7 +162,7 @@ class FcmService {
       body: message.notification?.body ?? '',
       data: message.data,
     );
-    if (message.data['type'] == 'ACCIDENT_DETECTED') {
+    if (message.data['type'] == 'ACCIDENT_DETECTED' || message.data['type'] == 'CONTACT_EMERGENCY') {
       _showEmergencyOverlay(message.data);
     }
   }
@@ -139,7 +171,7 @@ class FcmService {
     if (response.payload == null) return;
     try {
       final data = jsonDecode(response.payload!) as Map<String, dynamic>;
-      if (data['type'] == 'ACCIDENT_DETECTED') {
+      if (data['type'] == 'ACCIDENT_DETECTED' || data['type'] == 'CONTACT_EMERGENCY') {
         _showEmergencyOverlay(data);
       }
     } catch (_) {}

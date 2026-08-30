@@ -37,6 +37,9 @@ dependencies:
   path_provider: ^2.1.4
   mobile_scanner: ^5.2.3
   wakelock_plus: ^1.2.8
+  google_fonts: ^6.2.1
+  flutter_blue_plus: ^1.35.2
+  fl_chart: ^0.69.0
 
 dev_dependencies:
   flutter_test:

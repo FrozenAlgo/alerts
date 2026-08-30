@@ -3,6 +3,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../services/device_service.dart';
 import '../theme/app_theme.dart';
+import '../widgets/ui/ui.dart';
 
 class DeviceQrScannerPage extends StatefulWidget {
   final String userId;
@@ -30,7 +31,7 @@ class _DeviceQrScannerPageState extends State<DeviceQrScannerPage> {
       if (mounted) {
         Navigator.pop(context, serial);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Paired device $serial'), backgroundColor: Colors.greenAccent),
+          SnackBar(content: Text('Paired device $serial'), backgroundColor: AppTheme.kSuccess),
         );
       }
     } catch (e) {
@@ -45,25 +46,25 @@ class _DeviceQrScannerPageState extends State<DeviceQrScannerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.kDarkSlate,
-      appBar: AppBar(
-        title: const Text('Scan Device QR', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
+      backgroundColor: AppTheme.kBackground,
+      appBar: const AppBrandedAppBar(title: 'Scan Device QR'),
       body: Column(
         children: [
           const Padding(
             padding: EdgeInsets.all(16),
             child: Text(
               'Scan the QR code on your ESP32 label (format: SERIAL:PIN)',
-              style: TextStyle(color: Colors.blueGrey),
+              style: TextStyle(color: AppTheme.kTextSecondary),
               textAlign: TextAlign.center,
             ),
           ),
           Expanded(
-            child: MobileScanner(onDetect: _onDetect),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: MobileScanner(onDetect: _onDetect),
+            ),
           ),
+          const SizedBox(height: 16),
         ],
       ),
     );
